@@ -2,11 +2,11 @@
 {Disposable, CompositeDisposable} = require 'atom'
 humanize = require 'humanize-plus'
 
-FuzzyFinderView = require './fuzzy-finder-view'
+FathomFinderView = require './fathom-finder-view'
 PathLoader = require './path-loader'
 
 module.exports =
-class ProjectView extends FuzzyFinderView
+class ProjectView extends FathomFinderView
   paths: null
   reloadPaths: true
   reloadAfterFirstLoad: false
@@ -35,7 +35,7 @@ class ProjectView extends FuzzyFinderView
       @paths = null
 
   subscribeToConfig: ->
-    @disposables.add atom.config.onDidChange 'fuzzy-finder.ignoredNames', =>
+    @disposables.add atom.config.onDidChange 'fathom-finder.ignoredNames', =>
       @reloadPaths = true
 
     @disposables.add atom.config.onDidChange 'core.followSymlinks', =>

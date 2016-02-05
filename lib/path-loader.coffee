@@ -5,7 +5,7 @@ module.exports =
     projectPaths = []
     taskPath = require.resolve('./load-paths-handler')
     followSymlinks = atom.config.get 'core.followSymlinks'
-    ignoredNames = atom.config.get('fuzzy-finder.ignoredNames') ? []
+    ignoredNames = atom.config.get('fathom-finder.ignoredNames') ? []
     ignoredNames = ignoredNames.concat(atom.config.get('core.ignoredNames') ? [])
     ignoreVcsIgnores = atom.config.get('core.excludeVcsIgnoredPaths')
 

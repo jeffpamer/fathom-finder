@@ -10,7 +10,7 @@ Quickly find and open files using `cmd-t`.
 
 Turning on the "Search All Panes" setting reverses the behavior of `enter` and `shift-enter` so `enter` opens the file in any pane and `shift-enter` creates a new tab in the current pane.
 
-This package uses both the `core.ignoredNames` and `fuzzy-finder.ignoredNames`
+This package uses both the `core.ignoredNames` and `fathom-finder.ignoredNames`
 config settings to filter out files and folders that will not be shown.
 Both of those config settings are interpreted as arrays of
 [minimatch](https://github.com/isaacs/minimatch) glob patterns.

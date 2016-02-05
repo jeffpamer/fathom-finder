@@ -1,0 +1,7 @@
+'menu': [
+  'label': 'Find'
+  'submenu': [
+    { 'label': 'Find Buffer', 'command': 'fathom-finder:toggle-buffer-finder' }
+    { 'label': 'Find File', 'command': 'fathom-finder:toggle-file-finder' }
+  ]
+]
