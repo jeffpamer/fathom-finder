@@ -1,9 +1,9 @@
 {
-  "name": "fuzzy-finder",
-  "version": "0.94.0",
+  "name": "fathom-finder",
+  "version": "0.1.0",
   "main": "./lib/main",
-  "description": "Open an editor to a file in the project with `cmd-t`.",
-  "repository": "https://github.com/atom/fuzzy-finder",
+  "description": "Open an editor to a file in the project with `cmd-p`.",
+  "repository": "https://github.com/jeffpamer/fathom-finder",
   "license": "MIT",
   "dependencies": {
     "async": "0.2.6",
