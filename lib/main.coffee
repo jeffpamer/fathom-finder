@@ -12,10 +12,6 @@ module.exports =
       type: 'boolean'
       default: false
       description: 'Remember the typed query when closing the fuzzy finder and use that as the starting query next time the fuzzy finder is opened.'
-    useAlternateScoring:
-      type: 'boolean'
-      default: true
-      description: 'Use an alternative scoring approach which prefers run of consecutive characters, acronyms and start of words. (Experimental)'
 
   activate: (state) ->
     @active = true
@@ -23,10 +19,6 @@ module.exports =
     atom.commands.add 'atom-workspace',
       'fathom-finder:toggle-file-finder': =>
         @createProjectView().toggle()
-      'fathom-finder:toggle-buffer-finder': =>
-        @createBufferView().toggle()
-      'fathom-finder:toggle-git-status-finder': =>
-        @createGitStatusView().toggle()
 
     process.nextTick => @startLoadPathsTask()
 
@@ -40,12 +32,6 @@ module.exports =
     if @projectView?
       @projectView.destroy()
       @projectView = null
-    if @bufferView?
-      @bufferView.destroy()
-      @bufferView = null
-    if @gitStatusView?
-      @gitStatusView.destroy()
-      @gitStatusView = null
     @projectPaths = null
     @stopLoadPathsTask()
     @active = false
@@ -65,18 +51,6 @@ module.exports =
       @projectView = new ProjectView(@projectPaths)
       @projectPaths = null
     @projectView
-
-  createGitStatusView: ->
-    unless @gitStatusView?
-      GitStatusView  = require './git-status-view'
-      @gitStatusView = new GitStatusView()
-    @gitStatusView
-
-  createBufferView: ->
-    unless @bufferView?
-      BufferView = require './buffer-view'
-      @bufferView = new BufferView()
-    @bufferView
 
   startLoadPathsTask: ->
     @stopLoadPathsTask()

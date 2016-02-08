@@ -12,3 +12,5 @@
 
 '.fathom-finder atom-text-editor[mini]':
   'shift-enter': 'fathom-finder:invert-confirm'
+  'ctrl-j': 'core:move-down'
+  'ctrl-k': 'core:move-up'

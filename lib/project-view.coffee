@@ -1,5 +1,6 @@
 {$} = require 'atom-space-pen-views'
 {Disposable, CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
 humanize = require 'humanize-plus'
 
 FathomFinderView = require './fathom-finder-view'
@@ -61,7 +62,22 @@ class ProjectView extends FathomFinderView
       super
 
   populate: ->
-    @setItems(@paths) if @paths?
+    editors = atom.workspace.getTextEditors().filter (editor) -> editor.getPath()?
+    activeEditor = atom.workspace.getActiveTextEditor()
+    editors = _.sortBy editors, (editor) ->
+      if editor is activeEditor
+        0
+      else
+        -(editor.lastOpened or 1)
+
+    # Populate list with paths of any open buffers
+    paths = editors.map (editor) -> editor.getPath()
+
+    # Concat project paths if found
+    if @paths?
+      paths = paths.concat @paths
+
+    @setItems(_.uniq(paths))
 
     if atom.project.getPaths().length is 0
       @setItems([])

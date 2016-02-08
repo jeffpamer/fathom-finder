@@ -3,20 +3,18 @@ path = require 'path'
 {$, $$, SelectListView} = require 'atom-space-pen-views'
 {repositoryForPath} = require './helpers'
 fs = require 'fs-plus'
-fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
 
 module.exports =
-class FuzzyFinderView extends SelectListView
+class FathomFinderView extends SelectListView
   filePaths: null
   projectRelativePaths: null
   subscriptions: null
-  alternateScoring: false
 
   initialize: ->
     super
 
-    @addClass('fuzzy-finder')
+    @addClass('fathom-finder')
     @setMaxItems(10)
     @subscriptions = new CompositeDisposable
 
@@ -29,18 +27,15 @@ class FuzzyFinderView extends SelectListView
         @splitOpenPath (pane) -> pane.splitDown.bind(pane)
       'pane:split-up': =>
         @splitOpenPath (pane) -> pane.splitUp.bind(pane)
-      'fuzzy-finder:invert-confirm': =>
+      'fathom-finder:invert-confirm': =>
         @confirmInvertedSelection()
-
-    @alternateScoring = atom.config.get 'fuzzy-finder.useAlternateScoring'
-    @subscriptions.add atom.config.onDidChange 'fuzzy-finder.useAlternateScoring', ({newValue}) => @alternateScoring = newValue
 
 
   getFilterKey: ->
     'projectRelativePath'
 
   cancel: ->
-    if atom.config.get('fuzzy-finder.preserveLastSearch')
+    if atom.config.get('fathom-finder.preserveLastSearch')
       lastSearch = @getFilterQuery()
       super
 
@@ -59,11 +54,7 @@ class FuzzyFinderView extends SelectListView
 
     # Style matched characters in search results
     filterQuery = @getFilterQuery()
-
-    if @alternateScoring
-      matches = fuzzaldrinPlus.match(projectRelativePath, filterQuery)
-    else
-      matches = fuzzaldrin.match(projectRelativePath, filterQuery)
+    matches = fuzzaldrinPlus.match(projectRelativePath, filterQuery)
 
     $$ ->
 
@@ -87,34 +78,18 @@ class FuzzyFinderView extends SelectListView
         # Remaining characters are plain text
         @text path.substring(lastIndex)
 
-
-      @li class: 'two-lines', =>
+      @li class: 'one-line', =>
         if (repo = repositoryForPath(filePath))?
           status = repo.getCachedPathStatus(filePath)
           if repo.isStatusNew(status)
-            @div class: 'status status-added icon icon-diff-added'
+            @div class: 'status status-added'
           else if repo.isStatusModified(status)
-            @div class: 'status status-modified icon icon-diff-modified'
-
-        ext = path.extname(filePath)
-        if fs.isReadmePath(filePath)
-          typeClass = 'icon-book'
-        else if fs.isCompressedExtension(ext)
-          typeClass = 'icon-file-zip'
-        else if fs.isImageExtension(ext)
-          typeClass = 'icon-file-media'
-        else if fs.isPdfExtension(ext)
-          typeClass = 'icon-file-pdf'
-        else if fs.isBinaryExtension(ext)
-          typeClass = 'icon-file-binary'
-        else
-          typeClass = 'icon-file-text'
+            @div class: 'status status-modified'
 
         fileBasename = path.basename(filePath)
         baseOffset = projectRelativePath.length - fileBasename.length
 
-        @div class: "primary-line file icon #{typeClass}", 'data-name': fileBasename, 'data-path': projectRelativePath, -> highlighter(fileBasename, matches, baseOffset)
-        @div class: 'secondary-line path no-icon', -> highlighter(projectRelativePath, matches, 0)
+        @div class: 'path no-icon', -> highlighter(projectRelativePath, matches, 0)
 
   openPath: (filePath, lineNumber, openOptions) ->
     if filePath
@@ -149,10 +124,8 @@ class FuzzyFinderView extends SelectListView
     if @isQueryALineJump()
       @list.empty()
       @setError('Jump to line in active editor')
-    else if @alternateScoring
-      @populateAlternateList()
     else
-      super
+      @populateAlternateList()
 
 
   # Unfortunately  SelectListView do not allow inheritor to handle their own filtering.
@@ -164,7 +137,6 @@ class FuzzyFinderView extends SelectListView
   # Should be temporary
 
   populateAlternateList: ->
-
     return unless @items?
 
     filterQuery = @getFilterQuery()
@@ -174,28 +146,28 @@ class FuzzyFinderView extends SelectListView
       filteredItems = @items
 
     @list.empty()
-    if filteredItems.length
-      @setError(null)
 
-      for i in [0...Math.min(filteredItems.length, @maxItems)]
-        item = filteredItems[i]
-        itemView = $(@viewForItem(item))
-        itemView.data('select-list-item', item)
+    for i in [0...Math.min(filteredItems.length, @maxItems)]
+      item = filteredItems[i]
+      itemView = $(@viewForItem(item))
+      itemView.data('select-list-item', item)
+      @list.append(itemView)
+
+    if filteredItems.length < @maxItems
+      for i in [filteredItems.length...@maxItems]
+        itemView = $$ -> @div { class: 'empty', tabIndex: -1 }
         @list.append(itemView)
 
-      @selectItemView(@list.find('li:first'))
-    else
-      @setError(@getEmptyMessage(@items.length, filteredItems.length))
-
+    @selectItemView(@list.find('li:first'))
 
 
   confirmSelection: ->
     item = @getSelectedItem()
-    @confirmed(item, searchAllPanes: atom.config.get('fuzzy-finder.searchAllPanes'))
+    @confirmed(item, searchAllPanes: atom.config.get('fathom-finder.searchAllPanes'))
 
   confirmInvertedSelection: ->
     item = @getSelectedItem()
-    @confirmed(item, searchAllPanes: not atom.config.get('fuzzy-finder.searchAllPanes'))
+    @confirmed(item, searchAllPanes: not atom.config.get('fathom-finder.searchAllPanes'))
 
   confirmed: ({filePath}={}, openOptions) ->
     if atom.workspace.getActiveTextEditor() and @isQueryALineJump()
@@ -254,7 +226,7 @@ class FuzzyFinderView extends SelectListView
 
   show: ->
     @storeFocusedElement()
-    @panel ?= atom.workspace.addModalPanel(item: this)
+    @panel ?= atom.workspace.addBottomPanel({item: this, priority: 0})
     @panel.show()
     @focusFilterEditor()
 
