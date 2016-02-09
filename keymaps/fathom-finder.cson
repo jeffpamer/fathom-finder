@@ -1,14 +1,12 @@
 '.platform-darwin':
+  'ctrl-p': 'fathom-finder:toggle-file-finder'
   'cmd-p': 'fathom-finder:toggle-file-finder'
-  'cmd-b': 'fathom-finder:toggle-buffer-finder'
 
 '.platform-win32':
   'ctrl-p': 'fathom-finder:toggle-file-finder'
-  'ctrl-b': 'fathom-finder:toggle-buffer-finder'
 
 '.platform-linux':
   'ctrl-p': 'fathom-finder:toggle-file-finder'
-  'ctrl-b': 'fathom-finder:toggle-buffer-finder'
 
 '.fathom-finder atom-text-editor[mini]':
   'shift-enter': 'fathom-finder:invert-confirm'
