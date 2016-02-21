@@ -6,7 +6,7 @@ module.exports =
       description: 'List of string glob patterns. Files and directories matching these patterns will be ignored. This list is merged with the list defined by the core `Ignored Names` config setting. Example: `.git, ._*, Thumbs.db`.'
     searchAllPanes:
       type: 'boolean'
-      default: false
+      default: true
       description: 'Search all panes when opening files. If disabled, only the active pane is searched. Holding `shift` inverts this setting.'
     preserveLastSearch:
       type: 'boolean'
